@@ -7,13 +7,15 @@ from tools.tools import get_profile_url
 
 def lookup(name):
     llm = ChatOpenAI(temperature=0, model_name="gpt-3.5-turbo")
-    template = """given the full name {name_of_person} i want you to get me a link to their linkedin 
-    profile page. your answer should only contain a URL"""
+    template = """Given the name {name_of_person} i want you to find their twitter profile page, and 
+        extract it from their username. In your final response only the persons username should show.
+    """
+
     tools_for_agent = [
         Tool(
-            name="Crawl Google 4 linkedin profile page",
+            name="Crawl google 4 twitter profile page",
             func=get_profile_url,
-            description="useful for when you need the LinkedIn page url",
+            description="useful for when you need to get the twitter page url",
         )
     ]
     agent = initialize_agent(
@@ -25,6 +27,6 @@ def lookup(name):
     prompt_template = PromptTemplate(
         template=template, input_variables=["name_of_person"]
     )
-    linkedin_profile_url = agent.run(prompt_template.format_prompt(name_of_person=name))
 
-    return linkedin_profile_url
+    twitter_username = agent.run(prompt_template.format_prompt(name_of_person=name))
+    return twitter_username
